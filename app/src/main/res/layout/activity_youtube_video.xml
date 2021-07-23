@@ -5,15 +5,36 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".YoutubeVideo"
+
     android:orientation="vertical">
 
-    <com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
-        android:id="@+id/youtube_player_view"
+    <dd.wan.myyoutube.YoutubeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-    <Button
-        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:id="@+id/youtubeLayout"
+        android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Back"
-        android:id="@+id/back" />
+        android:id="@+id/viewHeader">
+        <com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
+            android:layout_width="match_parent"
+            android:id="@+id/youtube_button"
+            android:clickable="true"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+        <TextView
+            android:id="@+id/viewDesc"
+            android:tag="desc"
+            android:textSize="35sp"
+            android:clickable="false"
+            android:gravity="center"
+            android:text="Phần này để comment"
+            android:textColor="@color/black"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#C3A2A2"/>
+    </dd.wan.myyoutube.YoutubeLayout>
+
 </LinearLayout>

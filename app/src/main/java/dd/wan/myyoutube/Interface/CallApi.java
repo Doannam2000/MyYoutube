@@ -28,5 +28,5 @@ public interface CallApi {
     Call<DataVideo> getDataVideoPage(@Query("part") String part,
                                  @Query("chart") String chart,
                                  @Query("pageToken") String pageToken,
-                                 @Query("key") String key );
+                                 @Query("key") String key);
 }

@@ -18,16 +18,13 @@ import org.jetbrains.annotations.NotNull;
 public class YoutubeVideo extends AppCompatActivity {
 
     YouTubePlayerView youtubeVideo;
-    Button btnBack;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_youtube_video);
         getSupportActionBar().hide();
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        youtubeVideo = findViewById(R.id.youtube_player_view);
-        getLifecycle().addObserver(youtubeVideo);
-        btnBack = findViewById(R.id.back);
+        youtubeVideo = findViewById(R.id.youtube_button);
 
         Intent intent = getIntent();
         String videoID = intent.getStringExtra("videoID");
@@ -36,13 +33,6 @@ public class YoutubeVideo extends AppCompatActivity {
             public void onReady(@NotNull YouTubePlayer youTubePlayer) {
                 super.onReady(youTubePlayer);
                 youTubePlayer.loadVideo(videoID,0);
-            }
-        });
-
-        btnBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
             }
         });
 
