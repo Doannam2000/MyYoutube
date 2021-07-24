@@ -67,7 +67,7 @@ public class YoutubeLayout extends ViewGroup {
 
         @Override
         public boolean tryCaptureView(View child, int pointerId) {
-            return child == mHeaderView;
+            return true;
         }
 
 
@@ -123,42 +123,43 @@ public class YoutubeLayout extends ViewGroup {
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
-        final int action = MotionEventCompat.getActionMasked(ev);
-
-        if ((action != MotionEvent.ACTION_DOWN)) {
-            mDragHelper.cancel();
-            return super.onInterceptTouchEvent(ev);
-        }
-
-        if (action == MotionEvent.ACTION_CANCEL || action == MotionEvent.ACTION_UP) {
-            mDragHelper.cancel();
-            return false;
-        }
-
-        final float x = ev.getX();
-        final float y = ev.getY();
-        boolean interceptTap = false;
-
-        switch (action) {
-            case MotionEvent.ACTION_DOWN: {
-                mInitialMotionX = x;
-                mInitialMotionY = y;
-                interceptTap = mDragHelper.isViewUnder(mHeaderView, (int) x, (int) y);
-                break;
-            }
-
-            case MotionEvent.ACTION_MOVE: {
-                final float adx = Math.abs(x - mInitialMotionX);
-                final float ady = Math.abs(y - mInitialMotionY);
+//        final int action = MotionEventCompat.getActionMasked(ev);
+//
+//        if ((action != MotionEvent.ACTION_DOWN)) {
+//            mDragHelper.cancel();
+//            return super.onInterceptTouchEvent(ev);
+//        }
+//
+//        if (action == MotionEvent.ACTION_CANCEL || action == MotionEvent.ACTION_UP) {
+//            mDragHelper.cancel();
+//            return false;
+//        }
+//
+//        final float x = ev.getX();
+//        final float y = ev.getY();
+//        boolean interceptTap = false;
+//
+//        switch (action) {
+//            case MotionEvent.ACTION_DOWN: {
+//                mInitialMotionX = x;
+//                mInitialMotionY = y;
+//                interceptTap = mDragHelper.isViewUnder(mHeaderView, (int) x, (int) y);
+//                break;
+//            }
+//
+//            case MotionEvent.ACTION_MOVE: {
+//                final float adx = Math.abs(x - mInitialMotionX);
+//                final float ady = Math.abs(y - mInitialMotionY);
 //                final int slop = mDragHelper.getTouchSlop();
-                if ( adx > ady) { // ady > slop &&
-                    mDragHelper.cancel();
-                    return false;
-                }
-            }
-        }
-
-        return mDragHelper.shouldInterceptTouchEvent(ev) || interceptTap;
+//                if (ady > slop && adx > ady) { //
+//                    mDragHelper.cancel();
+//                    return false;
+//                }
+//            }
+//        }
+//        return mDragHelper.shouldInterceptTouchEvent(ev) || interceptTap;
+        onTouchEvent(ev);
+        return false;
     }
 
     @Override
