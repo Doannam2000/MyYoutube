@@ -49,8 +49,9 @@ public class MainActivity extends AppCompatActivity {
     YouTubePlayerView youtubeVideo;
     ImageView textView;
     YoutubeLayout yt ;
+    int i = 0;
     BottomNavigationView bottomNavigationView;
-    int i  = 0 ;
+    YouTubePlayer youPlayer;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,28 +59,43 @@ public class MainActivity extends AppCompatActivity {
         getSupportActionBar().hide();
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-
-
-
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
-        youtubeVideo = findViewById(R.id.viewHeader);
+
         textView = findViewById(R.id.viewDesc);
         yt = findViewById(R.id.youtubeLayout);
         recyclerView = findViewById(R.id.recycler_view);
+        youtubeVideo = findViewById(R.id.viewHeader);
         getLifecycle().addObserver(youtubeVideo);
 
 
         RecyclerAdapter.OnItemClickListener listener = new RecyclerAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(Video item) {
-                yt.setVisibility(View.VISIBLE);
-                youtubeVideo.addYouTubePlayerListener(new AbstractYouTubePlayerListener() {
+                YouTubePlayerListener listen = new AbstractYouTubePlayerListener() {
                     @Override
                     public void onReady(@NotNull YouTubePlayer youTubePlayer) {
                         super.onReady(youTubePlayer);
-                        youTubePlayer.loadVideo(item.getVideoID(),0);
+                        youPlayer = youTubePlayer;
+                        youPlayer.loadVideo(item.getVideoID(),0);
                     }
-                });
+                };
+                if(yt.getVisibility() == View.GONE)
+                {
+                    yt.setVisibility(View.VISIBLE);
+                    youtubeVideo.addYouTubePlayerListener(listen);
+                }
+                else
+                {
+                    youtubeVideo.removeYouTubePlayerListener(listen);
+                    youtubeVideo.addYouTubePlayerListener(new AbstractYouTubePlayerListener() {
+                        @Override
+                        public void onReady(@NotNull YouTubePlayer youTubePlayer) {
+                            super.onReady(youTubePlayer);
+                            youPlayer = youTubePlayer;
+                            youPlayer.loadVideo(item.getVideoID(),0);
+                        }
+                    });
+                }
             }
         };
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(MainActivity.this);
@@ -109,6 +125,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
 
     private void clickCallApi(String pageToken)
     {
