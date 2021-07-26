@@ -8,29 +8,19 @@
     android:orientation="vertical">
 
     <dd.wan.myyoutube.YoutubeLayout
-
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/youtubeLayout"
-        android:clickable="false"
-        android:layout_below="@+id/youtube_button"
         android:orientation="vertical">
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_below="@+id/youtube_button"
-        android:duplicateParentState="true"
-        android:layout_height="wrap_content"
-        android:id="@+id/viewHeader">
         <com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
             android:layout_width="match_parent"
-            android:id="@+id/youtube_button"
+            android:id="@+id/viewHeader"
             app:showYouTubeButton="true"
+            app:autoPlay="false"
             app:showFullScreenButton="true"
             android:duplicateParentState="true"
             android:layout_height="wrap_content"/>
 
-    </LinearLayout>
         <ImageView
             android:id="@+id/viewDesc"
             android:tag="desc"

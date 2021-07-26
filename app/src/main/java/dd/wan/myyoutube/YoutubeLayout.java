@@ -7,9 +7,12 @@ import android.view.View;
 import android.view.ViewGroup;
 
 
+import androidx.annotation.NonNull;
 import androidx.core.view.MotionEventCompat;
 import androidx.core.view.ViewCompat;
 import androidx.customview.widget.ViewDragHelper;
+
+import org.jetbrains.annotations.NotNull;
 
 
 public class YoutubeLayout extends ViewGroup {
@@ -51,10 +54,16 @@ public class YoutubeLayout extends ViewGroup {
         smoothSlideTo(0f);
     }
 
+    public boolean isMinimized()
+    {
+        if(mDragOffset == 1f)
+            return true;
+        return false;
+    }
+
     boolean smoothSlideTo(float slideOffset) {
         final int topBound = getPaddingTop();
         int y = (int) (topBound + slideOffset * mDragRange);
-
         if (mDragHelper.smoothSlideViewTo(mHeaderView, mHeaderView.getLeft(), y)) {
             ViewCompat.postInvalidateOnAnimation(this);
             return true;
@@ -62,12 +71,11 @@ public class YoutubeLayout extends ViewGroup {
         return false;
     }
 
+
     private class DragHelperCallback extends ViewDragHelper.Callback {
-
-
         @Override
         public boolean tryCaptureView(View child, int pointerId) {
-            return true;
+            return child==mHeaderView;
         }
 
 
@@ -77,12 +85,10 @@ public class YoutubeLayout extends ViewGroup {
             mTop = top;
 
             mDragOffset = (float) top / mDragRange;
-
             mHeaderView.setPivotX(mHeaderView.getWidth());
             mHeaderView.setPivotY(mHeaderView.getHeight());
             mHeaderView.setScaleX(1 - mDragOffset / 2);
             mHeaderView.setScaleY(1 - mDragOffset / 2);
-
             mDescView.setAlpha(1 - mDragOffset);
 
             requestLayout();
@@ -95,11 +101,18 @@ public class YoutubeLayout extends ViewGroup {
                 top += mDragRange;
             }
             mDragHelper.settleCapturedViewAt(releasedChild.getLeft(), top);
+            invalidate();
         }
+
 
         @Override
         public int getViewVerticalDragRange(View child) {
             return mDragRange;
+        }
+
+        @Override
+        public int getViewHorizontalDragRange(@NonNull @NotNull View child) {
+            return  mDragRange;
         }
 
         //  giữ view theo chiều dọc
@@ -107,7 +120,6 @@ public class YoutubeLayout extends ViewGroup {
         public int clampViewPositionVertical(View child, int top, int dy) {
             final int topBound = getPaddingTop();
             final int bottomBound = getHeight() - mHeaderView.getHeight() - mHeaderView.getPaddingBottom();
-
             final int newTop = Math.min(Math.max(top, topBound), bottomBound);
             return newTop;
         }
@@ -184,7 +196,7 @@ public class YoutubeLayout extends ViewGroup {
                 final int slop = mDragHelper.getTouchSlop();
                 if (dx * dx + dy * dy < slop * slop && isHeaderViewUnder) {
                     if (mDragOffset == 0) {
-//                        smoothSlideTo(1f);
+//                        smoothSlideTo(0.5f);
                     } else {
                         smoothSlideTo(0f);
                     }
@@ -221,7 +233,6 @@ public class YoutubeLayout extends ViewGroup {
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
         mDragRange = getHeight() - mHeaderView.getHeight();
-
         mHeaderView.layout(
                 0,
                 mTop,
@@ -234,4 +245,17 @@ public class YoutubeLayout extends ViewGroup {
                 r,
                 mTop + b);
     }
+
+
+//
+//    /**
+//     * Close the custom view applying an animation to close the view to the left side of the screen.
+//     */
+//    public void closeToLeft() {
+//        if (mDragHelper.smoothSlideViewTo(mHeaderView, -transformer.getOriginalWidth(),
+//                getHeight() - transformer.getMinHeightPlusMargin())) {
+//            ViewCompat.postInvalidateOnAnimation(this);
+//        }
+//    }
+
 }
