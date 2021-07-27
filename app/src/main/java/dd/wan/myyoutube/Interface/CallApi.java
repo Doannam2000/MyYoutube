@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 
 
 import dd.wan.myyoutube.Model.DataVideo;
+import dd.wan.myyoutube.Model.VideoSearch;
 import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -29,4 +30,12 @@ public interface CallApi {
                                  @Query("chart") String chart,
                                  @Query("pageToken") String pageToken,
                                  @Query("key") String key);
+
+    @GET("youtube/v3/search")
+    Call<VideoSearch> getVideoSearch(@Query("part") String part,
+                                     @Query("pageToken") String pageToken,
+                                     @Query("q") String q,
+                                     @Query("relatedToVideoId") String videoID,
+                                     @Query("type") String type,
+                                     @Query("key") String key);
 }

@@ -6,7 +6,6 @@ public class Video {
     @SerializedName("etag")
     private String etag;
     @SerializedName("id")
-//    private videoId videoID;
     private String VideoID;
     @SerializedName("snippet")
     private Snippet snippet;
@@ -16,7 +15,6 @@ public class Video {
 
     public Video(String etag, String videoID, Snippet snippet) {
         this.etag = etag;
-//        this.videoID = videoID;
         this.VideoID = videoID;
         this.snippet = snippet;
     }
@@ -28,14 +26,6 @@ public class Video {
     public void setEtag(String etag) {
         this.etag = etag;
     }
-
-//    public videoId getVideoID() {
-//        return videoID;
-//    }
-
-//    public void setVideoID(videoId videoID) {
-//        this.videoID = videoID;
-//    }
 
 
     public String getVideoID() {
@@ -62,44 +52,6 @@ public class Video {
                 ", snippet=" + snippet +
                 '}';
     }
-//    public class videoId
-//    {
-//        @SerializedName("videoId")
-//        private String videoID;
-//
-//        @SerializedName("playlistId")
-//        private String playlistID;
-//
-//        public String getPlaylistID() {
-//            return playlistID;
-//        }
-//
-//        public void setPlaylistID(String playlistID) {
-//            this.playlistID = playlistID;
-//        }
-//
-//        public String getVideoID() {
-//            return videoID;
-//        }
-//
-//        public void setVideoID(String videoID) {
-//            this.videoID = videoID;
-//        }
-//
-//        @Override
-//        public String toString() {
-//            return "videoId{" +
-//                    "videoID='" + videoID + '\'' +
-//                    '}';
-//        }
-//        public videoId() {
-//
-//        }
-//
-//        public videoId(String videoID, String playlistID) {
-//            this.videoID = videoID;
-//            this.playlistID = playlistID;
-//        }
-//    }
+
 }
 

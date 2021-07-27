@@ -67,8 +67,8 @@
         android:id="@+id/youtubeLayout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:visibility="gone"
         android:orientation="vertical"
+        android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@+id/bottomNavigationView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -82,13 +82,62 @@
             android:layout_height="wrap_content"
             android:duplicateParentState="true"
             android:tag="head" />
-
-        <ImageView
-            android:id="@+id/viewDesc"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="#C3A2A2"
-            android:duplicateParentState="true"
-            android:tag="desc" />
+            android:layout_height="wrap_content"
+            android:id="@+id/viewDesc"
+            android:background="#fff"
+            android:orientation="vertical">
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:id="@+id/description"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="5dp"
+                    android:paddingBottom="2dp"
+                    android:paddingLeft="20dp"
+                    android:text="Tilte"
+                    android:textSize="20sp"
+                    android:textColor="#000"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"/>
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/imageChanel1"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/title"
+                    app:layout_constraintVertical_bias="0.0" />
+
+                <TextView
+                    android:id="@+id/nameChanel1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Name of Chanel"
+                    android:textSize="15sp"
+                    app:layout_constraintBottom_toBottomOf="@+id/imageChanel1"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.037"
+                    app:layout_constraintStart_toEndOf="@+id/imageChanel1"
+                    app:layout_constraintTop_toTopOf="@+id/imageChanel1" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+            <androidx.recyclerview.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/relatedVideo"
+                android:duplicateParentState="true"
+                android:tag="desc" />
+        </LinearLayout>
     </dd.wan.myyoutube.YoutubeLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

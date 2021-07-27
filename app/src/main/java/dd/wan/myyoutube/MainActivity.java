@@ -14,8 +14,10 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.PlayerConstants;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer;
@@ -33,9 +35,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import dd.wan.myyoutube.Adapter.RecyclerAdapter;
+import dd.wan.myyoutube.Adapter.RelatedVideosAdapter;
 import dd.wan.myyoutube.Interface.CallApi;
 import dd.wan.myyoutube.Model.DataVideo;
 import dd.wan.myyoutube.Model.Video;
+import dd.wan.myyoutube.Model.VideoSearch;
+import de.hdodenhof.circleimageview.CircleImageView;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -43,17 +48,19 @@ import retrofit2.Response;
 public class MainActivity extends AppCompatActivity {
 
 
+    private static final String YOUTUBE_API_KEY = "AIzaSyAsJkTHV6KzBvN_V4B7GE-KKBpUxkUL_9o";
     RecyclerAdapter adapter;
+    RelatedVideosAdapter relatedVideosAdapter;
     DataVideo dataVideo ;
-    RecyclerView recyclerView;
+    RecyclerView recyclerView,relatedVideos;
     List<Video> list = new ArrayList<Video>();
     YouTubePlayerView youtubeVideo;
-    ImageView textView;
     YoutubeLayout yt ;
     BottomNavigationView bottomNavigationView;
     String VideoID;
+    TextView title,nameChanel;
+    CircleImageView imageChanel;
 
-    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,15 +68,10 @@ public class MainActivity extends AppCompatActivity {
         getSupportActionBar().hide();
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-        bottomNavigationView = findViewById(R.id.bottomNavigationView);
 
-        textView = findViewById(R.id.viewDesc);
-        yt = findViewById(R.id.youtubeLayout);
-        recyclerView = findViewById(R.id.recycler_view);
-        youtubeVideo = findViewById(R.id.viewHeader);
+        AnhXa();
+
         getLifecycle().addObserver(youtubeVideo);
-
-
         IFramePlayerOptions iFramePlayerOptions = new IFramePlayerOptions.Builder()
                 .controls(0)
                 .rel(0)
@@ -77,8 +79,8 @@ public class MainActivity extends AppCompatActivity {
                 .ccLoadPolicy(1)
                 .build();
 
-        getLifecycle().addObserver(youtubeVideo);
 
+        getLifecycle().addObserver(youtubeVideo);
         youtubeVideo.initialize(new AbstractYouTubePlayerListener() {
             @Override
             public void onReady(@NonNull YouTubePlayer youTubePlayer) {
@@ -89,7 +91,9 @@ public class MainActivity extends AppCompatActivity {
                             VideoID,0f
                     );
                 }
+
                 initRecyclerView(youTubePlayer);
+
             }
         }, true, iFramePlayerOptions);
 
@@ -105,12 +109,17 @@ public class MainActivity extends AppCompatActivity {
                 if(yt.getVisibility() == View.GONE)
                 {
                     yt.setVisibility(View.VISIBLE);
+                    bottomNavigationView.setVisibility(View.GONE);
                 }
                 VideoID = item.getVideoID();
+                initRecyclerViewRelatedVideos(youTubePlayer,VideoID);
                 YouTubePlayerUtils.loadOrCueVideo(
                         youTubePlayer, getLifecycle(),
                         VideoID,0f
                 );
+                title.setText(item.getSnippet().getTitle());
+                Glide.with(MainActivity.this).load(item.getSnippet().getImg().getUrl().getUrl()).into(imageChanel);
+                nameChanel.setText(item.getSnippet().getChannelTitle());
             }
         };
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(MainActivity.this);
@@ -127,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-        CallApi.callApi.getDataVideo("snippet","mostPopular","AIzaSyDox651-xo6JSTQeZGialodBMGCxToEGFc").enqueue(new Callback<DataVideo>() {
+        CallApi.callApi.getDataVideo("snippet","mostPopular",YOUTUBE_API_KEY).enqueue(new Callback<DataVideo>() {
             @Override
             public void onResponse(Call<DataVideo> call, Response<DataVideo> response) {
                 dataVideo = response.body();
@@ -144,7 +153,7 @@ public class MainActivity extends AppCompatActivity {
     // reload youtube api
     private void clickCallApi(String pageToken)
     {
-        CallApi.callApi.getDataVideoPage("snippet","mostPopular",pageToken,"AIzaSyDox651-xo6JSTQeZGialodBMGCxToEGFc").enqueue(new Callback<DataVideo>() {
+        CallApi.callApi.getDataVideoPage("snippet","mostPopular",pageToken,YOUTUBE_API_KEY).enqueue(new Callback<DataVideo>() {
             @Override
             public void onResponse(Call<DataVideo> call, Response<DataVideo> response) {
                 adapter.AddList(response.body(),response.body().getItem());
@@ -155,4 +164,83 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+
+    private void initRecyclerViewRelatedVideos(YouTubePlayer youTubePlayer,String firstID)
+    {
+        // Tạo interface listener xử lý onclick trên recyclerView RelatedVideos
+
+        RelatedVideosAdapter.OnItemClickListener listener = new RelatedVideosAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(VideoSearch.Videosearch item) {
+                String Relateds_Video_ID = item.getvideoId().getVideoID();
+                YouTubePlayerUtils.loadOrCueVideo(
+                        youTubePlayer, getLifecycle(),
+                        Relateds_Video_ID,0f);
+                relatedVideosAdapter.RemoveList();
+                VideoSearchAPI("","",Relateds_Video_ID);
+                title.setText(item.getSnippet().getTitle());
+                Glide.with(MainActivity.this).load(item.getSnippet().getImg().getUrl().getUrl()).into(imageChanel);
+                nameChanel.setText(item.getSnippet().getChannelTitle());
+            }
+        };
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(MainActivity.this);
+        relatedVideos.setHasFixedSize(true);
+        relatedVideos.setLayoutManager(linearLayoutManager);
+        relatedVideos.addItemDecoration(new DividerItemDecoration(MainActivity.this,DividerItemDecoration.VERTICAL));
+        relatedVideos.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull @NotNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if(!recyclerView.canScrollVertically(2))
+                {
+                    VideoSearchAPI(relatedVideosAdapter.getVideoSearch().getNextPageToken(),"",relatedVideosAdapter.getRelated_Video_ID());
+                }
+            }
+        });
+        CallApi.callApi.getVideoSearch("snippet","","",firstID,"video",YOUTUBE_API_KEY).enqueue(new Callback<VideoSearch>() {
+            @Override
+            public void onResponse(Call<VideoSearch> call, Response<VideoSearch> response) {
+               try {
+                   VideoSearch data = response.body();
+                   List<VideoSearch.Videosearch> list1= response.body().getItem();
+                   relatedVideosAdapter = new RelatedVideosAdapter(list1,data,MainActivity.this,listener,firstID);
+                   relatedVideos.setAdapter(relatedVideosAdapter);
+               }
+              catch (Exception e)
+              {
+                  Toast.makeText(MainActivity.this,"Lượt search trên api đã hết quay lại sau =.=",Toast.LENGTH_LONG).show();
+              }
+            }
+            @Override
+            public void onFailure(Call<VideoSearch> call, Throwable t) {
+            }
+        });
+    }
+
+    // SearchVideo
+    private void VideoSearchAPI(String pageToken,String q,String videoID)
+    {
+        CallApi.callApi.getVideoSearch("snippet",pageToken,q,videoID,"video",YOUTUBE_API_KEY).enqueue(new Callback<VideoSearch>() {
+            @Override
+            public void onResponse(Call<VideoSearch> call, Response<VideoSearch> response) {
+                relatedVideosAdapter.AddList(response.body(),videoID);
+            }
+            @Override
+            public void onFailure(Call<VideoSearch> call, Throwable t) {
+            }
+        });
+    }
+
+    private void AnhXa()
+    {
+
+        bottomNavigationView = findViewById(R.id.bottomNavigationView);
+        relatedVideos = findViewById(R.id.relatedVideo);
+        recyclerView = findViewById(R.id.recycler_view);
+        youtubeVideo = findViewById(R.id.viewHeader);
+        yt = findViewById(R.id.youtubeLayout);
+        imageChanel = findViewById(R.id.imageChanel1);
+        title = findViewById(R.id.title);
+        nameChanel = findViewById(R.id.nameChanel1);
+    }
 }
