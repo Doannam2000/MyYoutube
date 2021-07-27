@@ -21,6 +21,7 @@ import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.PlayerConstan
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.YouTubePlayerListener;
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.options.IFramePlayerOptions;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.utils.YouTubePlayerTracker;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.utils.YouTubePlayerUtils;
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView;
@@ -49,9 +50,10 @@ public class MainActivity extends AppCompatActivity {
     YouTubePlayerView youtubeVideo;
     ImageView textView;
     YoutubeLayout yt ;
-    int i = 0;
     BottomNavigationView bottomNavigationView;
-    YouTubePlayer youPlayer;
+    String VideoID;
+
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,34 +70,47 @@ public class MainActivity extends AppCompatActivity {
         getLifecycle().addObserver(youtubeVideo);
 
 
+        IFramePlayerOptions iFramePlayerOptions = new IFramePlayerOptions.Builder()
+                .controls(0)
+                .rel(0)
+                .ivLoadPolicy(1)
+                .ccLoadPolicy(1)
+                .build();
+
+        getLifecycle().addObserver(youtubeVideo);
+
+        youtubeVideo.initialize(new AbstractYouTubePlayerListener() {
+            @Override
+            public void onReady(@NonNull YouTubePlayer youTubePlayer) {
+                if(VideoID != null )
+                {
+                    YouTubePlayerUtils.loadOrCueVideo(
+                            youTubePlayer, getLifecycle(),
+                            VideoID,0f
+                    );
+                }
+                initRecyclerView(youTubePlayer);
+            }
+        }, true, iFramePlayerOptions);
+
+    }
+
+
+    // initialization recyclerView
+    private void initRecyclerView(YouTubePlayer youTubePlayer)
+    {
         RecyclerAdapter.OnItemClickListener listener = new RecyclerAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(Video item) {
-                YouTubePlayerListener listen = new AbstractYouTubePlayerListener() {
-                    @Override
-                    public void onReady(@NotNull YouTubePlayer youTubePlayer) {
-                        super.onReady(youTubePlayer);
-                        youPlayer = youTubePlayer;
-                        youPlayer.loadVideo(item.getVideoID(),0);
-                    }
-                };
                 if(yt.getVisibility() == View.GONE)
                 {
                     yt.setVisibility(View.VISIBLE);
-                    youtubeVideo.addYouTubePlayerListener(listen);
                 }
-                else
-                {
-                    youtubeVideo.removeYouTubePlayerListener(listen);
-                    youtubeVideo.addYouTubePlayerListener(new AbstractYouTubePlayerListener() {
-                        @Override
-                        public void onReady(@NotNull YouTubePlayer youTubePlayer) {
-                            super.onReady(youTubePlayer);
-                            youPlayer = youTubePlayer;
-                            youPlayer.loadVideo(item.getVideoID(),0);
-                        }
-                    });
-                }
+                VideoID = item.getVideoID();
+                YouTubePlayerUtils.loadOrCueVideo(
+                        youTubePlayer, getLifecycle(),
+                        VideoID,0f
+                );
             }
         };
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(MainActivity.this);
@@ -126,7 +141,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-
+    // reload youtube api
     private void clickCallApi(String pageToken)
     {
         CallApi.callApi.getDataVideoPage("snippet","mostPopular",pageToken,"AIzaSyDox651-xo6JSTQeZGialodBMGCxToEGFc").enqueue(new Callback<DataVideo>() {

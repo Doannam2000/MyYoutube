@@ -78,6 +78,7 @@
         <com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
             android:id="@+id/viewHeader"
             android:layout_width="match_parent"
+            app:enableAutomaticInitialization="false"
             android:layout_height="wrap_content"
             android:duplicateParentState="true"
             android:tag="head" />
