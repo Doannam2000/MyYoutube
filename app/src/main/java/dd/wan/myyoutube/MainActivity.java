@@ -48,7 +48,7 @@ import retrofit2.Response;
 public class MainActivity extends AppCompatActivity {
 
 
-    private static final String YOUTUBE_API_KEY = "AIzaSyAsJkTHV6KzBvN_V4B7GE-KKBpUxkUL_9o";
+    private static final String YOUTUBE_API_KEY = "YOUR_YOUTUBE_API_KEY";
     RecyclerAdapter adapter;
     RelatedVideosAdapter relatedVideosAdapter;
     DataVideo dataVideo ;
